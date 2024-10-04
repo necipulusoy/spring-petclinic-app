@@ -26,9 +26,6 @@ jobs:
         docker build -t necipulusoyy9120/spring-petclinic-app:$TAG -f application/Dockerfile application/
       # 3. Adım: Docker image'ı SHA tag'i ile oluştur
 
-    - name: Debug TAG Value
-      run: echo "TAG=$TAG"  # TAG değerini kontrol et
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
