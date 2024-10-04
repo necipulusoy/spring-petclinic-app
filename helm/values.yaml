@@ -1,0 +1,98 @@
+ingress:
+  name: application-ingress
+  enabled: true
+  className: nginx
+  annotations: 
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: necipulusoy.com
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: application-service
+              port: 8080
+
+
+configmap:
+  name: application-configmap
+  data: 
+    SPRING_JPA_HIBERNATE_DDL_AUTO: "update" 
+    SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-svc:3306/petclinic" 
+    SPRING_PROFILES_ACTIVE: "mysql"
+
+
+hpa:
+  name: application-hpa
+  enabled: true
+  maxReplicas: 3  
+  minReplicas: 1  
+  targetCPUUtilizationPercentage: 60  
+
+
+deployment:
+  name: application
+  replicaCount: 1
+  container:
+    image: "necipulusoyy9120/spring-petclinic-app"
+    name: "spring-petclinic-app"
+    imagePullPolicy: Always
+    securityContext:
+      runAsUser: 33
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+    livenessProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+      initialDelaySeconds: 180
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 3
+    startupProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+      initialDelaySeconds: 90
+      periodSeconds: 10
+      timeoutSeconds: 10
+      failureThreshold: 10
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "750m"
+      requests:
+        memory: "512Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 8080
+
+
+serviceAccount:
+  name: application-sa
+  automountServiceAccountToken: false 
+
+
+secret:
+  name: application-secret
+  data:
+    SPRING_DATASOURCE_USERNAME: "petclinic"  
+    SPRING_DATASOURCE_PASSWORD: "petclinic"  
+
+service:
+  name: application-service
+  type: NodePort  
+  port: 8080  
+  protocol: TCP        
+  targetPort: 8080    
+  nodePort: 30001
+

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  labels:
+    app: {{ .Values.deployment.name }}
+spec:
+  {{- if not .Values.hpa.enabled }}
+  replicas: {{ .Values.deployment.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.name }}
+    spec:
+      securityContext:
+        {{- if .Values.deployment.securityContext }}
+        {{- toYaml .Values.deployment.container.securityContext | nindent 10 }}
+        {{- end }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - image: {{ .Values.deployment.container.image }}
+          name: {{ .Values.deployment.container.name }}
+          imagePullPolicy: {{ .Values.deployment.container.imagePullPolicy }}
+          securityContext:
+            {{- if .Values.deployment.container.securityContext }}
+            {{- toYaml .Values.deployment.container.securityContext | nindent 12 }}
+            {{- end }}
+          ports:
+            {{- toYaml .Values.deployment.container.ports | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.deployment.container.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.deployment.container.readinessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.deployment.container.startupProbe | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configmap.name }}
+            - secretRef:
+                name: {{ .Values.secret.name }}
+          resources:
+            {{- toYaml .Values.deployment.container.resources | nindent 12 }}
