@@ -21,7 +21,7 @@ jobs:
 
     - name: Build Docker image with SHA tag
       run: |
-        TAG=${{ github.sha }}  # SHA değerini tag olarak kullan
+        TAG=$(echo "${{ github.sha }}" | cut -c1-7)  # SHA'nın ilk 7 karakterini al
         docker build -t necipulusoyy9120/spring-petclinic-app:$TAG -f application/Dockerfile application/
       # 3. Adım: Docker image'ı SHA tag'i ile oluştur
 
@@ -52,5 +52,5 @@ jobs:
 
     - name: Deploy to Kubernetes Cluster
       run: |
-        helm upgrade --install helm ./helm/-n prod
+        helm upgrade --install helm ./helm -n prod
       # 8. Adım: Güncellenmiş Helm chart'ı Kubernetes cluster'ına dağıt
