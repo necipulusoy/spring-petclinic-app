@@ -1,0 +1,30 @@
+services:
+  app:
+    image: spring-petclinic-app:v1.0
+    container_name: app
+    build: .  
+    ports:
+      - "8080:8080"  
+    depends_on:
+      - mysql  # First the MySQL service will run, then the app service will run
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/petclinic  # jdbc:database_type://service_name:3306/database_name
+      SPRING_DATASOURCE_USERNAME: petclinic  
+      SPRING_DATASOURCE_PASSWORD: petclinic  
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update  # Automatically adds new columns to the database if you add new columns to the table
+
+  mysql:
+    image: mysql:8.0  
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: petclinic  
+      MYSQL_DATABASE: petclinic  
+      MYSQL_USER: petclinic  # When creating a database, you must first define a root account.
+      MYSQL_PASSWORD: petclinic  
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/ubuntu/mysql_data:/var/lib/mysql  # Volume to persist MySQL data
+
+volumes:
+  mysql-data:  # Define the named volume to persist MySQL data
