@@ -22,7 +22,7 @@ spec:
         {{- end }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
-        - image: {{ .Values.deployment.container.image }}
+        - image: {{ .Values.deployment.container.image.repository }}:{{ .Values.deployment.container.image.tag }}
           name: {{ .Values.deployment.container.name }}
           imagePullPolicy: {{ .Values.deployment.container.imagePullPolicy }}
           securityContext:

@@ -35,7 +35,9 @@ deployment:
   name: application
   replicaCount: 1
   container:
-    image: "necipulusoyy9120/spring-petclinic-app"
+    image:
+      repository: "necipulusoyy9120/spring-petclinic-app"
+      tag: "3404785" 
     name: "spring-petclinic-app"
     imagePullPolicy: Always
     securityContext:
