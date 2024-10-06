@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # Specify the main branch
+    paths:
+      - 'src/**'
   workflow_dispatch:   # Configuration for manual trigger
 
 jobs:
@@ -50,6 +52,14 @@ jobs:
       run: |
         sed -i "s|tag: \".*\"|tag: \"$TAG\"|g" helm/values.yaml
       # Step 7: Update the image tag in values.yaml with the new SHA tag
+
+    - name: Commit and push updated values.yaml
+      run: |
+        git config --global user.email "necipulusoyy@gmail.com"
+        git config --global user.name "necipulusoy"
+        git add helm/values.yaml
+        git commit -m "Update image tag to $TAG"
+        git push origin main
 
     - name: Deploy to Kubernetes Cluster
       run: |
