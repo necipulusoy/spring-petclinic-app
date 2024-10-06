@@ -48,7 +48,7 @@ deployment:
     runAsNonRoot: true
   image:
     repository: "necipulusoyy9120/spring-petclinic-app"
-    tag: "3404785" 
+    tag: "fa4ee80" 
   containerName: "deployment"
   podSecurityContext:
     allowPrivilegeEscalation: false
