@@ -55,11 +55,11 @@ jobs:
 
     - name: Commit and push updated values.yaml
       run: |
-        git config --global user.email "necipulusoyy@gmail.com"
-        git config --global user.name "necipulusoy"
-        git add helm/values.yaml
-        git commit -m "Update image tag to $TAG"
-        git push origin main
+        git config --global user.email "necipulusoyy@gmail.com"  
+        git config --global user.name "necipulusoy"  
+        git add helm/values.yaml  
+        git commit -m "Update image tag to $TAG"  
+        git push origin main  # Push the changes to the main branch
 
     - name: Deploy to Kubernetes Cluster
       run: |
