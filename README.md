@@ -9,7 +9,6 @@ This project aims to create a complete CI/CD Pipeline for microservice-based app
 
 - **Manage Pets**: Add, update, delete pets.
 - **Manage Owners**: Add, update, delete pet owners.
-- **Manage Visits**: Schedule and manage visits for pets.
 - **MySQL Database**: Uses MySQL for storing data.
 
 

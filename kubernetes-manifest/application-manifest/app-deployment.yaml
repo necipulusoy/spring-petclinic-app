@@ -3,31 +3,30 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: app
+    app: app-deployment
   name: app-deployment
   namespace: prod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app
-  strategy: {}
+      app: app-deployment
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: app
+        app: app-deployment
     spec:
-      # affinity:
-      #   podAntiAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       - labelSelector:
-      #           matchExpressions:
-      #             - key: app
-      #               operator: In
-      #               values:
-      #                 - app
-      #         topologyKey: "kubernetes.io/hostname"  
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - app-deployment
+              topologyKey: "kubernetes.io/hostname"  
       securityContext:
         runAsUser: 33  
         runAsNonRoot: true  
@@ -61,7 +60,7 @@ spec:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 60
           periodSeconds: 10
           timeoutSeconds: 10
           failureThreshold: 10

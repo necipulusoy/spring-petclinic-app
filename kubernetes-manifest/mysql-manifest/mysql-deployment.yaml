@@ -21,7 +21,6 @@ spec:
       serviceAccountName: mysql-sa
       automountServiceAccountToken: false
       volumes:
-      # - name: local-storage
       - name: mysql-pv-storage
         persistentVolumeClaim:
           claimName: mysql-pv-claim
@@ -32,7 +31,6 @@ spec:
           allowPrivilegeEscalation: false
         volumeMounts:
         - mountPath: "/var/lib/mysql"
-         # name: local-storage
           name: mysql-pv-storage
         envFrom:
         - secretRef:

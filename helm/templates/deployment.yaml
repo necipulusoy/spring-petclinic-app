@@ -16,10 +16,14 @@ spec:
       labels:
         app: {{ .Values.deployment.name }}
     spec:
+      {{- if .Values.deployment.affinity}}
+      affinity:
+        {{- toYaml .Values.deployment.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.deployment.securityContext }}
       securityContext:
-        {{- if .Values.deployment.securityContext }}
-        {{- toYaml .Values.deployment.container.securityContext | nindent 10 }}
-        {{- end }}
+        {{- toYaml .Values.deployment.securityContext | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
         - image: {{ .Values.deployment.container.image.repository }}:{{ .Values.deployment.container.image.tag }}

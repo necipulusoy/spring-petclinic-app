@@ -1,8 +1,7 @@
 services:
   app:
-    image: spring-petclinic-app:v1.0
+    image: necipulusoyy9120/spring-petclinic-app:v1.0
     container_name: app
-    build: .  
     ports:
       - "8080:8080"  
     depends_on:

@@ -27,13 +27,26 @@ hpa:
   name: application-hpa
   enabled: true
   maxReplicas: 3  
-  minReplicas: 1  
+  minReplicas: 2  
   targetCPUUtilizationPercentage: 60  
 
 
 deployment:
   name: application
   replicaCount: 1
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - app-deployment
+          topologyKey: "kubernetes.io/hostname"  
+  securityContext:
+    runAsUser: 33
+    runAsNonRoot: true
   container:
     image:
       repository: "necipulusoyy9120/spring-petclinic-app"
@@ -41,8 +54,6 @@ deployment:
     name: "spring-petclinic-app"
     imagePullPolicy: Always
     securityContext:
-      runAsUser: 33
-      runAsNonRoot: true
       allowPrivilegeEscalation: false
     livenessProbe:
       httpGet:
