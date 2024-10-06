@@ -64,7 +64,7 @@ jobs:
 
     - name: Deploy to Kubernetes Cluster
       run: |
-        helm upgrade --install helm ./helm -n prod
+        helm upgrade --install helm ./helm -n prod --reuse-values
      
 
 
