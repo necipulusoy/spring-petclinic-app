@@ -1,5 +1,4 @@
 ingress:
-  name: application-ingress
   enabled: true
   className: nginx
   annotations: 
@@ -9,10 +8,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-          backend:
-            service:
-              name: application-service
-              port: 8080
+
 
 
 configmap:
@@ -23,12 +19,15 @@ configmap:
     SPRING_PROFILES_ACTIVE: "mysql"
 
 
+
+
 hpa:
-  name: application-hpa
   enabled: true
   maxReplicas: 3  
   minReplicas: 2  
   targetCPUUtilizationPercentage: 60  
+
+
 
 
 deployment:
@@ -47,47 +46,24 @@ deployment:
   securityContext:
     runAsUser: 33
     runAsNonRoot: true
-  container:
-    image:
-      repository: "necipulusoyy9120/spring-petclinic-app"
-      tag: "5e73bbd" 
-    name: "spring-petclinic-app"
-    imagePullPolicy: Always
-    securityContext:
-      allowPrivilegeEscalation: false
-    livenessProbe:
-      httpGet:
-        path: /actuator/health
-        port: 8080
-      initialDelaySeconds: 180
-      periodSeconds: 30
-      timeoutSeconds: 5
-      failureThreshold: 3
-    readinessProbe:
-      httpGet:
-        path: /actuator/health
-        port: 8080
-      initialDelaySeconds: 60
-      periodSeconds: 20
-      timeoutSeconds: 5
-      failureThreshold: 3
-    startupProbe:
-      httpGet:
-        path: /actuator/health
-        port: 8080
-      initialDelaySeconds: 90
-      periodSeconds: 10
-      timeoutSeconds: 10
-      failureThreshold: 10
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "750m"
-      requests:
-        memory: "512Mi"
-        cpu: "500m"
-    ports:
-      - containerPort: 8080
+  image:
+    repository: "necipulusoyy9120/spring-petclinic-app"
+    tag: "3404785" 
+  containerName: "deployment"
+  podSecurityContext:
+    allowPrivilegeEscalation: false
+  livenessProbe:
+    httpGet:
+    initialDelaySeconds: 60
+    periodSeconds: 20
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "750m"
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+
 
 
 serviceAccount:
@@ -95,11 +71,16 @@ serviceAccount:
   automountServiceAccountToken: false 
 
 
+
+
 secret:
   name: application-secret
   data:
     SPRING_DATASOURCE_USERNAME: "petclinic"  
     SPRING_DATASOURCE_PASSWORD: "petclinic"  
+
+
+
 
 service:
   name: application-service

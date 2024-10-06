@@ -26,25 +26,65 @@ spec:
       {{- end }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
-        - image: {{ .Values.deployment.container.image.repository }}:{{ .Values.deployment.container.image.tag }}
-          name: {{ .Values.deployment.container.name }}
-          imagePullPolicy: {{ .Values.deployment.container.imagePullPolicy }}
+        - image: {{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}
+          name: {{ .Values.deployment.containerName }}
+          imagePullPolicy: {{ .Values.deployment.imagePullPolicy | default "Always" }}
           securityContext:
-            {{- if .Values.deployment.container.securityContext }}
-            {{- toYaml .Values.deployment.container.securityContext | nindent 12 }}
+            {{- if .Values.deployment.podSecurityContext }}
+            {{- toYaml .Values.deployment.podSecurityContext| nindent 12 }}
             {{- end }}
           ports:
-            {{- toYaml .Values.deployment.container.ports | nindent 12 }}
+            - name: {{ .Values.deployment.containerName }}
+              containerPort: {{ .Values.service.port }}
           livenessProbe:
-            {{- toYaml .Values.deployment.container.livenessProbe | nindent 12 }}
+            {{- with .Values.deployment.livenessProbe }}
+              httpGet:
+                {{- if .httpGet }}
+                path: {{ .httpGet.path | default "/actuator/health" }}
+                port: {{ .httpGet.port | default "8080" }}
+                {{- else }}
+                path: "/actuator/health"  
+                port: {{ "8080" }}  
+                {{- end }}
+              initialDelaySeconds: {{ .initialDelaySeconds | default 180 }}
+              periodSeconds: {{ .periodSeconds | default 30 }}
+              timeoutSeconds: {{ .timeoutSeconds | default 5 }}
+              failureThreshold: {{ .failureThreshold | default 3 }}
+            {{- end }}
           readinessProbe:
-            {{- toYaml .Values.deployment.container.readinessProbe | nindent 12 }}
+            {{- with .Values.deployment.livenessProbe }}
+              httpGet:
+                {{- if .httpGet }}
+                path: {{ .httpGet.path | default "/actuator/health" }}
+                port: {{ .httpGet.port | default "8080" }}
+                {{- else }}
+                path: "/actuator/health"  
+                port: {{ "8080" }}  
+                {{- end }}
+              initialDelaySeconds: {{ .initialDelaySeconds | default 180 }}
+              periodSeconds: {{ .periodSeconds | default 30 }}
+              timeoutSeconds: {{ .timeoutSeconds | default 5 }}
+              failureThreshold: {{ .failureThreshold | default 3 }}
+            {{- end }}
           startupProbe:
-            {{- toYaml .Values.deployment.container.startupProbe | nindent 12 }}
+            {{- with .Values.deployment.livenessProbe }}
+              httpGet:
+                {{- if .httpGet }}
+                path: {{ .httpGet.path | default "/actuator/health" }}
+                port: {{ .httpGet.port | default "8080" }}
+                {{- else }}
+                path: "/actuator/health"  
+                port: {{ "8080" }}  
+                {{- end }}
+              initialDelaySeconds: {{ .initialDelaySeconds | default 180 }}
+              periodSeconds: {{ .periodSeconds | default 30 }}
+              timeoutSeconds: {{ .timeoutSeconds | default 5 }}
+              failureThreshold: {{ .failureThreshold | default 3 }}
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ .Values.configmap.name }}
             - secretRef:
                 name: {{ .Values.secret.name }}
           resources:
-            {{- toYaml .Values.deployment.container.resources | nindent 12 }}
+            {{- toYaml .Values.deployment.resources | nindent 12 }}
