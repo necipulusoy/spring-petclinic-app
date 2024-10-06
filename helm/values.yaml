@@ -50,7 +50,7 @@ deployment:
   container:
     image:
       repository: "necipulusoyy9120/spring-petclinic-app"
-      tag: "3404785" 
+      tag: "5e73bbd" 
     name: "spring-petclinic-app"
     imagePullPolicy: Always
     securityContext:
