@@ -3,8 +3,8 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Ana branşınızı belirtin
-  workflow_dispatch:  # Manuel tetikleme için ayar
+      - main  # Specify the main branch
+  workflow_dispatch:   # Configuration for manual trigger
 
 jobs:
   build:
@@ -13,45 +13,55 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      # 1. Adım: Repository'deki en son kodu al
+      # Step 1: Fetch the latest code from the repository
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-      # 2. Adım: Docker Buildx'i kur
+      # Step 2: Set up Docker Buildx
 
     - name: Build Docker image with SHA tag
       run: |
-        TAG=$(echo "${{ github.sha }}" | cut -c1-7)  # SHA'nın ilk 7 karakterini al
+        TAG=$(echo "${{ github.sha }}" | cut -c1-7)  # Get the first 7 characters of the SHA
         echo "TAG=$TAG" >> $GITHUB_ENV
         docker build -t necipulusoyy9120/spring-petclinic-app:$TAG -f application/Dockerfile application/
-      # 3. Adım: Docker image'ı SHA tag'i ile oluştur
+      # Step 3: Build the Docker image with the SHA tag
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      # 4. Adım: Docker Hub'a giriş yap
+       # Step 4: Log in to Docker Hub
 
     - name: Push Docker image to Docker Hub
       run: |
         docker push necipulusoyy9120/spring-petclinic-app:$TAG
-      # 5. Adım: Oluşan Docker image'ı Docker Hub'a gönder
+      # Step 5: Push the created Docker image to Docker Hub
 
     - name: Set up Kubeconfig
       run: |
-        mkdir -p $HOME/.kube  # .kube dizinini oluştur
-        echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config  # Kubeconfig dosyasını ayarla
-        chmod 600 $HOME/.kube/config  # Kubeconfig dosyasının izinlerini ayarla
+        mkdir -p $HOME/.kube  
+        echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config  
+        chmod 600 $HOME/.kube/config  
         kubectl get nodes
-      # 6. Adım: Kubeconfig'i yapılandır
+      # Step 6: Configure Kubeconfig
 
     - name: Update image tag in values.yaml
       run: |
-        sed -i "s|image: \"necipulusoyy9120/spring-petclinic-app:.*\"|image: \"necipulusoyy9120/spring-petclinic-app:$TAG\"|g" helm/values.yaml
-      # 7. Adım: values.yaml dosyasındaki image değerini yeni SHA tag ile güncelle
+        sed -i "s|tag: \".*\"|tag: \"$TAG\"|g" helm/values.yaml
+      # Step 7: Update the image tag in values.yaml with the new SHA tag
 
     - name: Deploy to Kubernetes Cluster
       run: |
         helm upgrade --install helm ./helm -n prod
-      # 8. Adım: Güncellenmiş Helm chart'ı Kubernetes cluster'ına dağıt
+      # Step 8: Deploy the updated Helm chart to the Kubernetes cluster
+
+
+
+
+
+
+
+
+
+
