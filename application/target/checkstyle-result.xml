@@ -198,13 +198,9 @@
 </file>
 <file name="/home/ubuntu/spring-petclinic-app/application/settings.gradle">
 </file>
-<file name="/home/ubuntu/spring-petclinic-app/application/.gitignore">
-</file>
 <file name="/home/ubuntu/spring-petclinic-app/application/.editorconfig">
 </file>
 <file name="/home/ubuntu/spring-petclinic-app/application/gradlew.bat">
-</file>
-<file name="/home/ubuntu/spring-petclinic-app/application/.github/workflows/maven-build.yml">
 </file>
 <file name="/home/ubuntu/spring-petclinic-app/application/mvnw">
 </file>
@@ -215,8 +211,6 @@
 <file name="/home/ubuntu/spring-petclinic-app/application/.mvn/wrapper/maven-wrapper.properties">
 </file>
 <file name="/home/ubuntu/spring-petclinic-app/application/pom.xml">
-</file>
-<file name="/home/ubuntu/spring-petclinic-app/application/docker-compose.yml">
 </file>
 <file name="/home/ubuntu/spring-petclinic-app/application/.devcontainer/devcontainer.json">
 </file>

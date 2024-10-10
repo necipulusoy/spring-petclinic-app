@@ -33,7 +33,7 @@ spec:
       serviceAccountName: app-sa
       automountServiceAccountToken: false
       containers:
-      - image: necipulusoyy9120/spring-petclinic-app:v1.2
+      - image: necipulusoyy9120/spring-petclinic-app
         name: spring-petclinic-app
         imagePullPolicy: Always
         securityContext:
